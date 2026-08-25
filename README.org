@@ -1,0 +1,6 @@
+#+TITLE: Lisp-RPC Doc
+#+Author: ccQpein
+
+[[file:Spec.org][lisp-rpc spec]]
+
+[[file:lisp-rpc-data-format-prompt.md][lisp-rpc llm data format prompt]]
