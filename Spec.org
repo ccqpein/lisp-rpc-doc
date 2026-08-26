@@ -61,6 +61,13 @@ Keywords can take *Data*, *List*, or *Map* types as values.
   (update-user :id 1 :profile '(:email "a@b.com" :tags '("admin" "staff")))
 #+end_src
 
+*Caution*: Nested types (e.g. list in list, map in list) still require their own leading quotes:
+#+begin_src lisp
+  ;; List of lists: '('(1 2) '(3 4))
+  ;; List of maps:  '('(:id 1) '(:id 2))
+  (example-rpc :matrix '('(1 2) '(3 4)) :records '('(:id 1) '(:id 2)))
+#+end_src
+
 * Spec Mode
 Spec Mode allows defining a formal schema for the RPC interface. This enables automatic library generation, type checking, and better error handling.
 
@@ -113,7 +120,7 @@ Example:
 * Grammar and Validation Rules
 1. *Keywords*: All keys in Data and Map types must be Lisp keywords (starting with =:=).
 2. *Quoting*:
-   - In *Plain Mode*: Lists and Maps MUST be quoted (e.g., ='(...)=).
+   - In *Plain Mode*: Lists and Maps MUST be quoted (e.g., ='(...)=), including nested ones (e.g., ='('(1 2))=, ='('(:a 1))=).
    - In *Spec Mode*:
      - Types in =def-msg= are typically quoted symbols (e.g., ='string=).
      - Anonymous maps in =def-msg= or =def-rpc= can be quoted or unquoted (depending on implementation, but consistent quoting is recommended).
