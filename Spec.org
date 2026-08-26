@@ -2,7 +2,13 @@
 #+Author: ccQpein
 
 * Introduction
-Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It supports two modes: *Plain Mode* for direct, dynamic communication and *Spec Mode* for schema-defined, type-checked communication. [[https://github.com/ccqpein/lisp-rpc][Source code]].
+Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It supports two modes: *Plain Mode* for direct, dynamic communication and *Spec Mode* for schema-defined, type-checked communication.
+
+* Repositories
+- [[https://github.com/ccqpein/lisp-rpc][lisp-rpc]]: Rust implementation
+- [[https://github.com/ccqpein/lisp-rpc.cl][lisp-rpc.cl]]: Common Lisp implementation
+- [[https://github.com/ccqpein/lisp-rpc-json-convertor][lisp-rpc-json-convertor]]: JSON converter
+- [[https://github.com/ccqpein/lisp-rpc-doc][lisp-rpc-doc]]: Documentation and specification
 
 * Data Types
 Lisp-RPC supports the following data types:
@@ -115,4 +121,3 @@ Example:
      - Optional types in =def-msg= use the =(optional 'type)= constructor.
 3. *Uniqueness*: Keyword names within a single Data or Map structure must be unique.
 4. *Symbols*: Use quoted symbols for type references to avoid evaluation errors in dynamic environments.
-
