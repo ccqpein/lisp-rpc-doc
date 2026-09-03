@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2026-08-25 Tue 21:33 -->
+<!-- 2026-09-02 Wed 21:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Lisp-RPC Specification</title>
@@ -208,42 +208,43 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org2559458">1. Introduction</a></li>
-<li><a href="#orgb583a19">2. Repositories</a></li>
-<li><a href="#org0c6fb21">3. Data Types</a>
+<li><a href="#orgde7a6d7">1. Introduction</a></li>
+<li><a href="#orgf496b71">2. Repositories</a></li>
+<li><a href="#orgfd99db3">3. Data Types</a>
 <ul>
-<li><a href="#org186404b">3.1. Primary Types</a></li>
-<li><a href="#orgb293e91">3.2. Complex Types</a></li>
+<li><a href="#orgf93881b">3.1. JSON vs. Lisp-RPC Quick Reference</a></li>
+<li><a href="#org9234af7">3.2. Primary Types</a></li>
+<li><a href="#org337217b">3.3. Complex Types</a></li>
 </ul>
 </li>
-<li><a href="#org795b16d">4. Plain Mode</a>
+<li><a href="#orgd64d854">4. Plain Mode</a>
 <ul>
-<li><a href="#org99393d7">4.1. Request Format</a></li>
-<li><a href="#org2202d7e">4.2. Response Format</a></li>
-<li><a href="#org76fc507">4.3. Nested Data</a></li>
+<li><a href="#org477ba3c">4.1. Request Format</a></li>
+<li><a href="#orgb2ca8b3">4.2. Response Format</a></li>
+<li><a href="#orgd005998">4.3. Nested Data</a></li>
 </ul>
 </li>
-<li><a href="#orgd3ff8a4">5. Spec Mode</a>
+<li><a href="#org2b6fc72">5. Spec Mode</a>
 <ul>
-<li><a href="#orgf1a04ac">5.1. Defining a Package</a></li>
-<li><a href="#orgb82eaab">5.2. Defining Messages (Data Structures)</a></li>
-<li><a href="#org2a6e816">5.3. Defining RPCs</a></li>
+<li><a href="#orgdd02782">5.1. Defining a Package</a></li>
+<li><a href="#orgd99b8ca">5.2. Defining Messages (Data Structures)</a></li>
+<li><a href="#orgd57fb32">5.3. Defining RPCs</a></li>
 </ul>
 </li>
-<li><a href="#org86a5914">6. Grammar and Validation Rules</a></li>
+<li><a href="#org63cac7b">6. Grammar and Validation Rules</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org2559458" class="outline-2">
-<h2 id="org2559458"><span class="section-number-2">1.</span> Introduction</h2>
+<div id="outline-container-orgde7a6d7" class="outline-2">
+<h2 id="orgde7a6d7"><span class="section-number-2">1.</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It supports two modes: <b>Plain Mode</b> for direct, dynamic communication and <b>Spec Mode</b> for schema-defined, type-checked communication.
 </p>
 </div>
 </div>
-<div id="outline-container-orgb583a19" class="outline-2">
-<h2 id="orgb583a19"><span class="section-number-2">2.</span> Repositories</h2>
+<div id="outline-container-orgf496b71" class="outline-2">
+<h2 id="orgf496b71"><span class="section-number-2">2.</span> Repositories</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li><a href="https://github.com/ccqpein/lisp-rpc">lisp-rpc</a>: Rust implementation</li>
@@ -253,27 +254,97 @@ Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It
 </ul>
 </div>
 </div>
-<div id="outline-container-org0c6fb21" class="outline-2">
-<h2 id="org0c6fb21"><span class="section-number-2">3.</span> Data Types</h2>
+<div id="outline-container-orgfd99db3" class="outline-2">
+<h2 id="orgfd99db3"><span class="section-number-2">3.</span> Data Types</h2>
 <div class="outline-text-2" id="text-3">
 <p>
-Lisp-RPC supports the following data types:
+Lisp-RPC supports the following data types. For developers familiar with JSON, here is a quick mapping:
 </p>
 </div>
-<div id="outline-container-org186404b" class="outline-3">
-<h3 id="org186404b"><span class="section-number-3">3.1.</span> Primary Types</h3>
+<div id="outline-container-orgf93881b" class="outline-3">
+<h3 id="orgf93881b"><span class="section-number-3">3.1.</span> JSON vs. Lisp-RPC Quick Reference</h3>
 <div class="outline-text-3" id="text-3-1">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Concept</th>
+<th scope="col" class="org-left">JSON Equivalent</th>
+<th scope="col" class="org-left">Lisp-RPC Syntax</th>
+<th scope="col" class="org-left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Named Data</td>
+<td class="org-left"><code>{"data_name": "user", "id": 1}</code></td>
+<td class="org-left"><code>(user :id 1)</code></td>
+<td class="org-left">Never quoted; used for messages and RPC calls</td>
+</tr>
+
+<tr>
+<td class="org-left">Anonymous Map</td>
+<td class="org-left"><code>{"city": "Tokyo", "zip": 100}</code></td>
+<td class="org-left"><code>'(:city "Tokyo" :zip 100)</code></td>
+<td class="org-left">Must be quoted</td>
+</tr>
+
+<tr>
+<td class="org-left">List / Sequence</td>
+<td class="org-left"><code>["apple", "banana"]</code></td>
+<td class="org-left"><code>'("apple" "banana")</code></td>
+<td class="org-left">Must be quoted</td>
+</tr>
+
+<tr>
+<td class="org-left">Primitives</td>
+<td class="org-left"><code>"hello"</code> / <code>42</code> / <code>3.14</code></td>
+<td class="org-left"><code>"hello"</code> / <code>42</code> / <code>3.14</code></td>
+<td class="org-left">Strings, integers, floats</td>
+</tr>
+
+<tr>
+<td class="org-left">Boolean / Null</td>
+<td class="org-left"><code>true</code> / <code>false</code> / <code>null</code></td>
+<td class="org-left"><code>T</code> / <code>NIL</code></td>
+<td class="org-left">Case-insensitive</td>
+</tr>
+
+<tr>
+<td class="org-left">Enum / Symbol</td>
+<td class="org-left"><code>"admin"</code></td>
+<td class="org-left"><code>'admin</code></td>
+<td class="org-left">Quoted symbol</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-org9234af7" class="outline-3">
+<h3 id="org9234af7"><span class="section-number-3">3.2.</span> Primary Types</h3>
+<div class="outline-text-3" id="text-3-2">
 <ul class="org-ul">
 <li><b>string</b>: A standard Lisp string (e.g., <code>"hello"</code>).</li>
 <li><b>number</b>: Integers (e.g., <code>42</code>).</li>
 <li><b>float</b>: Floating-point numbers (e.g., <code>3.14</code>).</li>
 <li><b>boolean</b>: Represented by <code>T</code> (true) and <code>NIL</code> (false). (Note: In S-expressions, <code>NIL</code> also represents an empty list).</li>
+<li><b>symbol</b>: A quoted identifier (e.g., <code>'admin</code>, <code>'active</code>). Used for enum variants and identifiers.</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb293e91" class="outline-3">
-<h3 id="orgb293e91"><span class="section-number-3">3.2.</span> Complex Types</h3>
-<div class="outline-text-3" id="text-3-2">
+<div id="outline-container-org337217b" class="outline-3">
+<h3 id="org337217b"><span class="section-number-3">3.3.</span> Complex Types</h3>
+<div class="outline-text-3" id="text-3-3">
 <ul class="org-ul">
 <li><b>Data</b>: A named structure followed by keyword-value pairs.
 <ul class="org-ul">
@@ -294,15 +365,15 @@ Lisp-RPC supports the following data types:
 </div>
 </div>
 </div>
-<div id="outline-container-org795b16d" class="outline-2">
-<h2 id="org795b16d"><span class="section-number-2">4.</span> Plain Mode</h2>
+<div id="outline-container-orgd64d854" class="outline-2">
+<h2 id="orgd64d854"><span class="section-number-2">4.</span> Plain Mode</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 In Plain Mode, the client sends a raw S-expression (as a string) to the server. The server evaluates or parses the call and returns a result in the same format.
 </p>
 </div>
-<div id="outline-container-org99393d7" class="outline-3">
-<h3 id="org99393d7"><span class="section-number-3">4.1.</span> Request Format</h3>
+<div id="outline-container-org477ba3c" class="outline-3">
+<h3 id="org477ba3c"><span class="section-number-3">4.1.</span> Request Format</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 A request must be a <b>Data</b> type:
@@ -321,8 +392,8 @@ Example:
 </div>
 </div>
 </div>
-<div id="outline-container-org2202d7e" class="outline-3">
-<h3 id="org2202d7e"><span class="section-number-3">4.2.</span> Response Format</h3>
+<div id="outline-container-orgb2ca8b3" class="outline-3">
+<h3 id="orgb2ca8b3"><span class="section-number-3">4.2.</span> Response Format</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 The response is also a <b>Data</b> type:
@@ -341,8 +412,8 @@ Example:
 </div>
 </div>
 </div>
-<div id="outline-container-org76fc507" class="outline-3">
-<h3 id="org76fc507"><span class="section-number-3">4.3.</span> Nested Data</h3>
+<div id="outline-container-orgd005998" class="outline-3">
+<h3 id="orgd005998"><span class="section-number-3">4.3.</span> Nested Data</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 Keywords can take <b>Data</b>, <b>List</b>, or <b>Map</b> types as values.
@@ -364,15 +435,23 @@ Keywords can take <b>Data</b>, <b>List</b>, or <b>Map</b> types as values.
 </div>
 </div>
 </div>
-<div id="outline-container-orgd3ff8a4" class="outline-2">
-<h2 id="orgd3ff8a4"><span class="section-number-2">5.</span> Spec Mode</h2>
+<div id="outline-container-org2b6fc72" class="outline-2">
+<h2 id="org2b6fc72"><span class="section-number-2">5.</span> Spec Mode</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Spec Mode allows defining a formal schema for the RPC interface. This enables automatic library generation, type checking, and better error handling.
 </p>
+
+<p>
+Please check the example in code:
+</p>
+<ul class="org-ul">
+<li><a href="https://github.com/ccqpein/lisp-rpc/blob/main/examples/rust/spec-mode-generate-lib/spec.lisprpc">Rust Spec Example</a></li>
+<li><a href="https://github.com/ccqpein/lisp-rpc.cl/blob/main/examples/spec-demo.lisp">Common Lisp Spec Example</a></li>
+</ul>
 </div>
-<div id="outline-container-orgf1a04ac" class="outline-3">
-<h3 id="orgf1a04ac"><span class="section-number-3">5.1.</span> Defining a Package</h3>
+<div id="outline-container-orgdd02782" class="outline-3">
+<h3 id="orgdd02782"><span class="section-number-3">5.1.</span> Defining a Package</h3>
 <div class="outline-text-3" id="text-5-1">
 <div class="org-src-container">
 <pre class="src src-lisp"><code>(def-rpc-package package-name)
@@ -380,8 +459,8 @@ Spec Mode allows defining a formal schema for the RPC interface. This enables au
 </div>
 </div>
 </div>
-<div id="outline-container-orgb82eaab" class="outline-3">
-<h3 id="orgb82eaab"><span class="section-number-3">5.2.</span> Defining Messages (Data Structures)</h3>
+<div id="outline-container-orgd99b8ca" class="outline-3">
+<h3 id="orgd99b8ca"><span class="section-number-3">5.2.</span> Defining Messages (Data Structures)</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
 Use <code>def-msg</code> to define reusable data structures.
@@ -415,8 +494,8 @@ Examples:
 </div>
 </div>
 </div>
-<div id="outline-container-org2a6e816" class="outline-3">
-<h3 id="org2a6e816"><span class="section-number-3">5.3.</span> Defining RPCs</h3>
+<div id="outline-container-orgd57fb32" class="outline-3">
+<h3 id="orgd57fb32"><span class="section-number-3">5.3.</span> Defining RPCs</h3>
 <div class="outline-text-3" id="text-5-3">
 <p>
 Use <code>def-rpc</code> to define a remote procedure, specifying its input schema and output message type.
@@ -442,20 +521,22 @@ Example:
 </div>
 </div>
 </div>
-<div id="outline-container-org86a5914" class="outline-2">
-<h2 id="org86a5914"><span class="section-number-2">6.</span> Grammar and Validation Rules</h2>
+<div id="outline-container-org63cac7b" class="outline-2">
+<h2 id="org63cac7b"><span class="section-number-2">6.</span> Grammar and Validation Rules</h2>
 <div class="outline-text-2" id="text-6">
 <ol class="org-ol">
 <li><b>Keywords</b>: All keys in Data and Map types must be Lisp keywords (starting with <code>:</code>).</li>
-<li><b>Quoting</b>:
+<li><b>Quoting (Two Golden Rules)</b>:
 <ul class="org-ul">
-<li>In <b>Plain Mode</b>: Lists and Maps MUST be quoted (e.g., <code>'(...)</code>), including nested ones (e.g., <code>'('(1 2))</code>, <code>'('(:a 1))</code>).</li>
-<li>In <b>Spec Mode</b>:
+<li><b>Rule 1: Named structures are NEVER quoted.</b>
+Top-level RPC requests, responses, and nested named Data structures do NOT take a quote (e.g., <code>(get-book ...)</code>, <code>(book-info ...)</code>).</li>
+<li><b>Rule 2: Literal data collections and symbols MUST be quoted.</b>
+Lists <code>'(...)</code>, Anonymous Maps <code>'(:key val)</code>, Symbols <code>'symbol</code>, and nested collections (e.g., list of lists <code>'('(1 2) '(3 4))</code>, list of maps <code>'('(:id 1) '(:id 2))</code>) must each have a leading quote.</li>
+<li><b>In Spec Mode</b>:
 <ul class="org-ul">
-<li>Types in <code>def-msg</code> are typically quoted symbols (e.g., <code>'string</code>).</li>
-<li>Anonymous maps in <code>def-msg</code> or <code>def-rpc</code> can be quoted or unquoted (depending on implementation, but consistent quoting is recommended).</li>
-<li>Lists in <code>def-msg</code> use the <code>(list 'type)</code> constructor.</li>
-<li>Optional types in <code>def-msg</code> use the <code>(optional 'type)</code> constructor.</li>
+<li>Types in <code>def-msg</code> and <code>def-rpc</code> are quoted symbols (e.g., <code>'string</code>, ='book-info).</li>
+<li>Lists use the <code>(list 'type)</code> constructor.</li>
+<li>Optional types use the <code>(optional 'type)</code> constructor.</li>
 </ul></li>
 </ul></li>
 <li><b>Uniqueness</b>: Keyword names within a single Data or Map structure must be unique.</li>
@@ -466,7 +547,7 @@ Example:
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: ccQpein</p>
-<p class="date">Created: 2026-08-25 Tue 21:33</p>
+<p class="date">Created: 2026-09-02 Wed 21:39</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

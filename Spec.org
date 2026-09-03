@@ -11,13 +11,24 @@ Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It
 - [[https://github.com/ccqpein/lisp-rpc-doc][lisp-rpc-doc]]: Documentation and specification
 
 * Data Types
-Lisp-RPC supports the following data types:
+Lisp-RPC supports the following data types. For developers familiar with JSON, here is a quick mapping:
+
+** JSON vs. Lisp-RPC Quick Reference
+| Concept         | JSON Equivalent                | Lisp-RPC Syntax           | Notes                                         |
+|-----------------+--------------------------------+---------------------------+-----------------------------------------------|
+| Named Data      | ={"data_name": "user", "id": 1}= | =(user :id 1)=              | Never quoted; used for messages and RPC calls |
+| Anonymous Map   | ={"city": "Tokyo", "zip": 100}=  | ='(:city "Tokyo" :zip 100)= | Must be quoted                                |
+| List / Sequence | =["apple", "banana"]=            | ='("apple" "banana")=       | Must be quoted                                |
+| Primitives      | ="hello"= / =42= / =3.14=            | ="hello"= / =42= / =3.14=       | Strings, integers, floats                     |
+| Boolean / Null  | =true= / =false= / =null=            | =T= / =NIL=                   | Case-insensitive                              |
+| Enum / Symbol   | ="admin"=                        | ='admin=                    | Quoted symbol                                 |
 
 ** Primary Types
 + *string*: A standard Lisp string (e.g., ="hello"=).
 + *number*: Integers (e.g., =42=).
 + *float*: Floating-point numbers (e.g., =3.14=).
 + *boolean*: Represented by =T= (true) and =NIL= (false). (Note: In S-expressions, =NIL= also represents an empty list).
++ *symbol*: A quoted identifier (e.g., ='admin=, ='active=). Used for enum variants and identifiers.
 
 ** Complex Types
 + *Data*: A named structure followed by keyword-value pairs.
@@ -71,6 +82,10 @@ Keywords can take *Data*, *List*, or *Map* types as values.
 * Spec Mode
 Spec Mode allows defining a formal schema for the RPC interface. This enables automatic library generation, type checking, and better error handling.
 
+Please check the example in code:
+- [[https://github.com/ccqpein/lisp-rpc/blob/main/examples/rust/spec-mode-generate-lib/spec.lisprpc][Rust Spec Example]]
+- [[https://github.com/ccqpein/lisp-rpc.cl/blob/main/examples/spec-demo.lisp][Common Lisp Spec Example]]
+
 ** Defining a Package
 #+begin_src lisp
   (def-rpc-package package-name)
@@ -119,12 +134,14 @@ Example:
 
 * Grammar and Validation Rules
 1. *Keywords*: All keys in Data and Map types must be Lisp keywords (starting with =:=).
-2. *Quoting*:
-   - In *Plain Mode*: Lists and Maps MUST be quoted (e.g., ='(...)=), including nested ones (e.g., ='('(1 2))=, ='('(:a 1))=).
-   - In *Spec Mode*:
-     - Types in =def-msg= are typically quoted symbols (e.g., ='string=).
-     - Anonymous maps in =def-msg= or =def-rpc= can be quoted or unquoted (depending on implementation, but consistent quoting is recommended).
-     - Lists in =def-msg= use the =(list 'type)= constructor.
-     - Optional types in =def-msg= use the =(optional 'type)= constructor.
+2. *Quoting (Two Golden Rules)*:
+   - *Rule 1: Named structures are NEVER quoted.*
+     Top-level RPC requests, responses, and nested named Data structures do NOT take a quote (e.g., =(get-book ...)=, =(book-info ...)=).
+   - *Rule 2: Literal data collections and symbols MUST be quoted.*
+     Lists ='(...)=, Anonymous Maps ='(:key val)=, Symbols ='symbol=, and nested collections (e.g., list of lists ='('(1 2) '(3 4))=, list of maps ='('(:id 1) '(:id 2))=) must each have a leading quote.
+   - *In Spec Mode*:
+     - Types in =def-msg= and =def-rpc= are quoted symbols (e.g., ='string=, ='book-info).
+     - Lists use the =(list 'type)= constructor.
+     - Optional types use the =(optional 'type)= constructor.
 3. *Uniqueness*: Keyword names within a single Data or Map structure must be unique.
 4. *Symbols*: Use quoted symbols for type references to avoid evaluation errors in dynamic environments.
