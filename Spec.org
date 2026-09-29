@@ -7,6 +7,7 @@ Lisp-RPC is a lightweight, S-expression based Remote Procedure Call protocol. It
 * Repositories
 - [[https://github.com/ccqpein/lisp-rpc][lisp-rpc]]: Rust implementation
 - [[https://github.com/ccqpein/lisp-rpc.cl][lisp-rpc.cl]]: Common Lisp implementation
+- [[https://github.com/ccqpein/lisp-rpc-golang][lisp-rpc-golang]]: Golang implementation
 - [[https://github.com/ccqpein/lisp-rpc-json-convertor][lisp-rpc-json-convertor]]: JSON converter
 - [[https://github.com/ccqpein/lisp-rpc-doc][lisp-rpc-doc]]: Documentation and specification
 
