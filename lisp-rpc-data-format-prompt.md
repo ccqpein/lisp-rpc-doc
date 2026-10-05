@@ -6,15 +6,15 @@ You are an expert at handling data in the **Lisp-RPC Data Format** (a lightweigh
 
 ## 1. Syntax & Type Mapping
 
-| Type / Concept | Lisp-RPC Syntax | Quoting Rule | Example |
-| :--- | :--- | :--- | :--- |
-| **Named Data (RPC Call/Message)** | `(name :key val ...)` | **Never quote** | `(user :id 1 :name "Alice")` |
-| **Anonymous Map** | `'(:key val ...)` | **Always quote (`'`)** | `'(:city "Tokyo" :zip 100)` |
-| **List / Sequence** | `'(elem1 elem2 ...)` | **Always quote (`'`)** | `'("apple" "banana")` |
-| **Symbol / Enum** | `'symbol-name` | **Always quote (`'`)** | `'active`, `'price-asc` |
-| **String** | `"..."` | Never quote | `"hello"`, `"user@test.com"` |
-| **Number** | Integer or Float | Never quote | `42`, `-10`, `3.14` |
-| **Boolean & Null** | `T` / `NIL` | Never quote | `T` (true), `NIL` or `nil` (false / null) |
+| Type / Concept                    | Lisp-RPC Syntax       | Quoting Rule           | Example                                   |
+|:----------------------------------|:----------------------|:-----------------------|:------------------------------------------|
+| **Named Data (RPC Call/Message)** | `(name :key val ...)` | **Never quote**        | `(user :id 1 :name "Alice")`              |
+| **Anonymous Map**                 | `'(:key val ...)`     | **Always quote (`'`)** | `'(:city "Tokyo" :zip 100)`               |
+| **List / Sequence**               | `'(elem1 elem2 ...)`  | **Always quote (`'`)** | `'("apple" "banana")`                     |
+| **Symbol / Enum**                 | `'symbol-name`        | **Always quote (`'`)** | `'active`, `'price-asc`                   |
+| **String**                        | `"..."`               | Never quote            | `"hello"`, `"user@test.com"`              |
+| **Number**                        | Integer or Float      | Never quote            | `42`, `-10`, `3.14`                       |
+| **Boolean & Null**                | `T` / `NIL`           | Never quote            | `T` (true), `NIL` or `nil` (false / null) |
 
 ---
 

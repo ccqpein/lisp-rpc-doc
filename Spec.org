@@ -93,11 +93,12 @@ Please check the example in code:
 #+end_src
 
 ** Defining Messages (Data Structures)
-Use =def-msg= to define reusable data structures.
+Use =def-msg= to define reusable data structures. An optional documentation string can be placed immediately after the message name:
 #+begin_src lisp
-  (def-msg message-name :key1 'type1 :key2 'type2 ...)
+  (def-msg message-name ["docstring"] :key1 'type1 :key2 'type2 ...)
 #+end_src
 
+- An optional docstring can be provided before key-type pairs; code generators use this as documentation comments (e.g., Rust doc comments).
 - Types can be primary types (='string=, ='number/'int=, ='float=, ='boolean=).
 - Types can be other defined messages.
 - Types can be nested lists: =(list 'type)=.
@@ -108,25 +109,38 @@ Examples:
 #+begin_src lisp
   (def-msg language-preference :lang 'string)
 
-  (def-msg author-list :names (list 'string))
+  (def-msg author-list
+    "List of book authors."
+    :names (list 'string))
 
   (def-msg user
+    "User profile representation."
     :id 'number ;; or 'int, if it is float, use 'float
     :middle-name (optional 'string)
     :meta '(:created-at 'string :active 'boolean)) ;; Quoted map schema
 #+end_src
 
 ** Defining RPCs
-Use =def-rpc= to define a remote procedure, specifying its input schema and output message type.
+Use =def-rpc= to define a remote procedure, specifying its input schema and output message type. An optional documentation string can be placed immediately after the RPC name:
 #+begin_src lisp
   (def-rpc rpc-name
+      ["docstring"]
       '(:param1 'type1 :param2 'type2 ...)
     'response-message-name)
 #+end_src
 
-Example:
+- An optional docstring can be placed before the argument list; code generators attach this docstring to the generated RPC procedure/definition.
+
+Examples:
 #+begin_src lisp
+  ;; Without docstring
+  (def-rpc ping
+      '()
+    'pong-response)
+
+  ;; With docstring
   (def-rpc get-book
+      "Retrieve book details by title and optional version."
       '(:title 'string :version (optional 'string)
         :lang '(:lang 'string :encoding 'number)
         :authors 'author-list)
@@ -144,5 +158,6 @@ Example:
      - Types in =def-msg= and =def-rpc= are quoted symbols (e.g., ='string=, ='book-info).
      - Lists use the =(list 'type)= constructor.
      - Optional types use the =(optional 'type)= constructor.
+     - Documentation strings: An optional string literal placed immediately after the name in =def-msg= or =def-rpc= serves as the documentation for that message or RPC definition.
 3. *Uniqueness*: Keyword names within a single Data or Map structure must be unique.
 4. *Symbols*: Use quoted symbols for type references to avoid evaluation errors in dynamic environments.
