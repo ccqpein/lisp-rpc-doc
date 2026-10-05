@@ -47,7 +47,84 @@ All top-level RPC messages are named **Data** structures:
 
 ---
 
-## 4. Comprehensive Example
+## 4. Generating Messages from `def-msg` Schemas
+
+When given schema definitions written with `def-msg`:
+```lisp
+(def-msg <name> ["optional docstring"] :key1 'type1 :key2 'type2 ...)
+```
+
+Use these schemas as the catalog of available message types to translate user requests into valid Lisp-RPC data:
+
+1. **Infer Message Intent**:
+   - **With Docstring**: The docstring explicitly explains the domain purpose, constraints, and semantics of the message.
+   - **Without Docstring**: Infer the message's purpose and expected values directly from the message name and keyword identifiers.
+2. **Construct the Message**:
+   - Wrap the data in an **unquoted** named structure matching the message name: `(<name> :key val ...)`.
+   - Map schema types into valid Lisp-RPC values:
+     - `'string` -> `"text"`
+     - `'number`, `'int`, `'float` -> numbers (`42`, `3.14`)
+     - `'boolean` -> `T` or `NIL`
+     - `(optional 'type)` -> value or `NIL`
+     - `(list 'type)` -> quoted list `'("elem1" "elem2")`
+     - Quoted map `'(:k 'type ...)` -> quoted anonymous map `'(:k val ...)`
+
+### Example 1: Schema With Docstring (Telemetry Report)
+
+**Schema Provided:**
+```lisp
+(def-msg device-telemetry
+  "Periodic telemetry report from an IoT edge node tracking battery, environment, and online status."
+  :device-id 'string
+  :battery-pct 'number
+  :temperature 'float
+  :is-online 'boolean
+  :location (optional 'string))
+```
+
+**User Request:**
+> *"Report device status for sensor 'node-88': 92% battery, 21.5°C, online, stationed in 'zone-b'."*
+
+**Generated Lisp-RPC Data:**
+```lisp
+(device-telemetry
+  :device-id "node-88"
+  :battery-pct 92
+  :temperature 21.5
+  :is-online T
+  :location "zone-b")
+```
+
+### Example 2: Schema Without Docstring (Service Configuration)
+
+Shows how to deduce the purpose and structure purely from identifiers and types, including lists and nested maps.
+
+**Schema Provided:**
+```lisp
+(def-msg service-config
+  :service-name 'string
+  :port 'number
+  :debug-mode 'boolean
+  :tags (list 'string)
+  :database '(:host 'string :pool-size 'number))
+```
+
+**User Request:**
+> *"Configure the 'auth-service' on port 8080 with debug disabled, tagged with 'security' and 'v2', connecting to DB 'db.internal' with a pool size of 10."*
+
+**Generated Lisp-RPC Data:**
+```lisp
+(service-config
+  :service-name "auth-service"
+  :port 8080
+  :debug-mode NIL
+  :tags '("security" "v2")
+  :database '(:host "db.internal" :pool-size 10))
+```
+
+---
+
+## 5. Comprehensive Example
 
 This example demonstrates all data types, nesting rules, and quoting conventions in one structure:
 
@@ -67,9 +144,10 @@ This example demonstrates all data types, nesting rules, and quoting conventions
 
 ---
 
-## 5. Strict Generation Checklist for LLMs
+## 6. Strict Generation Checklist for LLMs
 
 When generating or validating Lisp-RPC data:
+- [ ] **Schema matching**: When schemas are provided via `def-msg`, select the appropriate message (via docstring or name/keys) and output the instantiated named structure `(name :key val ...)`.
 - [ ] **Keyword keys**: Every key starts with a colon (`:`) and is immediately followed by its value (`:key value`).
 - [ ] **Kebab-case**: Use `kebab-case` for method names, data names, and keys (e.g. `get-user-data`, `:user-id`).
 - [ ] **No commas or colons after keys**: Use whitespace to separate elements (`:id 1 :name "Alice"`, NOT `:id: 1, :name: "Alice"`).
